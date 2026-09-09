@@ -9,7 +9,7 @@ const Gameboard = (() => {
     }
 
     const getBoard = () => board;
-    const setBoard = (column, row, player) => {
+    const setBoard = (row, column, player) => {
         board[row][column].setValue(player);
     };
     const printBoard = () => {
@@ -34,17 +34,33 @@ const Gameboard = (() => {
         }
         // Check diagonal
         if (board[0][0].getValue() == board[1][1].getValue() &&
-            board[1][1].getValue() == board[2][2].getValue()) {
+            board[1][1].getValue() == board[2][2].getValue() &&
+            board[2][2].getValue() != undefined) {
             return true;
         };
         if (board[0][2].getValue() == board[1][1].getValue() &&
-            board[1][1].getValue() == board[2][0].getValue()) {
+            board[1][1].getValue() == board[2][0].getValue() &&
+            board[2][2].getValue() != undefined) {
             return true;
         };
         return false;
     }
 
-    return {getBoard, setBoard, printBoard, checkWin} 
+    const checkEndOfGame = () => {
+        if (checkWin()) {
+            return true;
+        };
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (board[row][col].getValue() == undefined) {
+                    return false;
+                };
+            };
+        };
+        return true;
+    };
+
+    return {getBoard, setBoard, printBoard, checkWin, checkEndOfGame} 
 
 })();
 
@@ -63,3 +79,15 @@ function Cell() {
         getValue
     };
 }
+
+// const game = Gameboard;
+// console.log(game.checkWin());
+// console.log(game.checkEndOfGame());
+// for (let row = 0; row < 3; row++) {
+//     for (let col = 0; col < 3; col++) {
+//         game.setBoard(row,col,Math.random())
+//     };
+// };
+// game.printBoard();
+// console.log(game.checkWin());
+// console.log(game.checkEndOfGame());
