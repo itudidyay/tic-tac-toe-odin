@@ -30,7 +30,6 @@ const Gameboard = (() => {
     const printBoard = () => {
         const printOfBoard = board.map((row) =>
             row.map((cell) => cell.getValue()))
-        console.log(printOfBoard);
     } 
     const getWinner = () => {
         // Check row & column
@@ -145,10 +144,8 @@ function screenController() {
 
     const displayResults = () => {
         if (game.getWinner()) {
-            console.log("Winner!")
             resultDiv.textContent = `${game.getWinner()} wins!`;
         } else if (game.checkEndOfGame()) {
-            console.log("Tie!")
             resultDiv.textContent = "Tie!";
         } else {
             resultDiv.textContent = `It is ${player}'s turn.`;
@@ -159,22 +156,17 @@ function screenController() {
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
         if (!selectedRow||!selectedColumn||e.target.textContent||game.checkWin()) return;
-        //console.log(`${selectedRow}, ${selectedColumn}`);
         game.setBoard(selectedRow, selectedColumn, player);
         switchPlayerTurn();
         updateBoard();
-        game.printBoard();
         displayResults();
     }
 
     boardDiv.addEventListener("click", clickHandlerBoard);
     restartBtn.addEventListener("click", () => {
-        game.printBoard();
-        console.log("attempting to reset")
         game.resetBoard();
         updateBoard();
         displayResults();
-        //resultDiv.textContent = "";
     });
     updateBoard()
     displayResults()
