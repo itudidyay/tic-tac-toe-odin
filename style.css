@@ -1,0 +1,11 @@
+.board {
+    display: grid;
+    grid-template-rows: 100px 100px 100px;
+    grid-template-columns: 100px 100px 100px;
+    gap: 10px;
+}
+.board button {
+    font-size: 64px;
+    font-weight: bold;
+    font-family: Courier, monospace;
+}
