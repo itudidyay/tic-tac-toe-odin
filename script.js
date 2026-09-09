@@ -17,13 +17,39 @@ const Gameboard = (() => {
             row.map((cell) => cell.getValue()))
         console.log(printOfBoard);
     } 
+    const checkWin = () => {
+        // Check row & column
+        for (let i = 0; i < 3; i++) {
+            if (board[i][0].getValue() == undefined || board[0][i].getValue() == undefined) {
+                break;
+            }
+            if (board[i][0].getValue() == board[i][1].getValue() &&
+            board[i][1].getValue() == board[i][2].getValue()) {
+                return true;
+            }
+            if (board[0][i].getValue() == board[1][i].getValue() &&
+            board[1][i].getValue() == board[2][i].getValue()) {
+                return true;
+            }
+        }
+        // Check diagonal
+        if (board[0][0].getValue() == board[1][1].getValue() &&
+            board[1][1].getValue() == board[2][2].getValue()) {
+            return true;
+        };
+        if (board[0][2].getValue() == board[1][1].getValue() &&
+            board[1][1].getValue() == board[2][0].getValue()) {
+            return true;
+        };
+        return false;
+    }
 
-    return {getBoard, setBoard, printBoard} 
+    return {getBoard, setBoard, printBoard, checkWin} 
 
 })();
 
 function Cell() {
-    let value = null;
+    let value;
 
     const setValue = (player) => {
         value = player;
