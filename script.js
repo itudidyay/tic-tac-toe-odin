@@ -1,5 +1,5 @@
 const Gameboard = (() => {
-    const board = []
+    let board = []
 
     for (let i = 0; i < 3; i++) {
         board[i] = [];
@@ -15,6 +15,18 @@ const Gameboard = (() => {
     const setBoard = (row, column, player) => {
         board[row][column].setValue(player);
     };
+    const resetBoard = () => {
+        board = []
+        for (let i = 0; i < 3; i++) {
+            board[i] = [];
+            for (let j = 0; j < 3; j++) {
+                let cell = Cell();
+                cell.setRowIndex(i);
+                cell.setColumnIndex(j);
+                board[i].push(cell);
+            }
+        }
+    }
     const printBoard = () => {
         const printOfBoard = board.map((row) =>
             row.map((cell) => cell.getValue()))
@@ -31,7 +43,7 @@ const Gameboard = (() => {
             if (board[0][i].getValue() == board[1][i].getValue() &&
                 board[1][i].getValue() == board[2][i].getValue() &&
                 board[0][i].getValue() != undefined) {
-                return board[i][0].getValue();
+                return board[0][i].getValue();
             }
         }
         // Check diagonal
@@ -42,7 +54,7 @@ const Gameboard = (() => {
         };
         if (board[0][2].getValue() == board[1][1].getValue() &&
             board[1][1].getValue() == board[2][0].getValue() &&
-            board[2][2].getValue() != undefined) {
+            board[1][1].getValue() != undefined) {
             return board[1][1].getValue();
         };
         return false;
@@ -69,7 +81,7 @@ const Gameboard = (() => {
         return true;
     };
 
-    return {getBoard, setBoard, printBoard, getWinner, checkWin, checkEndOfGame} 
+    return {getBoard, setBoard, resetBoard, printBoard, getWinner, checkWin, checkEndOfGame} 
 
 })();
 
@@ -109,9 +121,9 @@ function Cell() {
 
 function screenController() {
     const game = Gameboard;
-    const board = game.getBoard();
     const boardDiv = document.querySelector(".board");
     const resultDiv = document.querySelector(".result");
+    const restartBtn = document.querySelector("#restartBtn");
     let player = "X";
 
     const switchPlayerTurn = () => {
@@ -120,7 +132,7 @@ function screenController() {
 
     const updateBoard = () => {
         boardDiv.textContent = "";
-        board.forEach(row => {row.forEach(cell => {
+        game.getBoard().forEach(row => {row.forEach(cell => {
             const cellButton = document.createElement("button");
             cellButton.classList.add("cell");
             cellButton.dataset.row = cell.getRowIndex();
@@ -138,6 +150,8 @@ function screenController() {
         } else if (game.checkEndOfGame()) {
             console.log("Tie!")
             resultDiv.textContent = "Tie!";
+        } else {
+            resultDiv.textContent = `It is ${player}'s turn.`;
         };
     }
 
@@ -152,9 +166,18 @@ function screenController() {
         game.printBoard();
         displayResults();
     }
-    boardDiv.addEventListener("click", clickHandlerBoard);
 
+    boardDiv.addEventListener("click", clickHandlerBoard);
+    restartBtn.addEventListener("click", () => {
+        game.printBoard();
+        console.log("attempting to reset")
+        game.resetBoard();
+        updateBoard();
+        displayResults();
+        //resultDiv.textContent = "";
+    });
     updateBoard()
+    displayResults()
 }
 
 screenController()
