@@ -20,30 +20,36 @@ const Gameboard = (() => {
             row.map((cell) => cell.getValue()))
         console.log(printOfBoard);
     } 
-    const checkWin = () => {
+    const getWinner = () => {
         // Check row & column
         for (let i = 0; i < 3; i++) {
-            if (board[i][0].getValue() == undefined || board[0][i].getValue() == undefined) {
-                break;
-            }
             if (board[i][0].getValue() == board[i][1].getValue() &&
-            board[i][1].getValue() == board[i][2].getValue()) {
-                return true;
+                board[i][1].getValue() == board[i][2].getValue() &&
+                board[i][0].getValue() != undefined ) {
+                return board[i][0].getValue();
             }
             if (board[0][i].getValue() == board[1][i].getValue() &&
-            board[1][i].getValue() == board[2][i].getValue()) {
-                return true;
+                board[1][i].getValue() == board[2][i].getValue() &&
+                board[0][i].getValue() != undefined) {
+                return board[i][0].getValue();
             }
         }
         // Check diagonal
         if (board[0][0].getValue() == board[1][1].getValue() &&
             board[1][1].getValue() == board[2][2].getValue() &&
             board[2][2].getValue() != undefined) {
-            return true;
+            return board[1][1].getValue();
         };
         if (board[0][2].getValue() == board[1][1].getValue() &&
             board[1][1].getValue() == board[2][0].getValue() &&
             board[2][2].getValue() != undefined) {
+            return board[1][1].getValue();
+        };
+        return false;
+    }
+
+    const checkWin = () => {
+        if (getWinner()) {
             return true;
         };
         return false;
@@ -63,7 +69,7 @@ const Gameboard = (() => {
         return true;
     };
 
-    return {getBoard, setBoard, printBoard, checkWin, checkEndOfGame} 
+    return {getBoard, setBoard, printBoard, getWinner, checkWin, checkEndOfGame} 
 
 })();
 
@@ -104,7 +110,8 @@ function Cell() {
 function screenController() {
     const game = Gameboard;
     const board = game.getBoard();
-    const boardDiv = document.querySelector(".board")
+    const boardDiv = document.querySelector(".board");
+    const resultDiv = document.querySelector(".result");
     let player = "X";
 
     const switchPlayerTurn = () => {
@@ -124,14 +131,26 @@ function screenController() {
         });
     }
 
+    const displayResults = () => {
+        if (game.getWinner()) {
+            console.log("Winner!")
+            resultDiv.textContent = `${game.getWinner()} wins!`;
+        } else if (game.checkEndOfGame()) {
+            console.log("Tie!")
+            resultDiv.textContent = "Tie!";
+        };
+    }
+
     function clickHandlerBoard(e) {
         const selectedRow = e.target.dataset.row;
         const selectedColumn = e.target.dataset.column;
-        if (!selectedRow||!selectedColumn||e.target.textContent) return;
+        if (!selectedRow||!selectedColumn||e.target.textContent||game.checkWin()) return;
         //console.log(`${selectedRow}, ${selectedColumn}`);
         game.setBoard(selectedRow, selectedColumn, player);
         switchPlayerTurn();
         updateBoard();
+        game.printBoard();
+        displayResults();
     }
     boardDiv.addEventListener("click", clickHandlerBoard);
 
